@@ -31,6 +31,8 @@ https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/periph
 
 extern "C" void app_main(void)
 {
+    vTaskDelay(pdMS_TO_TICKS(20000));
+
     ESP_LOGI("MAIN", "Hello World!");
 
     // ======================CONFIGURE BUS SECTION=========================== //
@@ -43,7 +45,7 @@ extern "C" void app_main(void)
     busConfig.quadhd_io_num = -1; // -1 value, we are not using these 
     // We can then initialize the bus. If we need a larger buffer size in the future, just use 
     // SPI_DMA_CH_AUTO. This function expects a pointer to our config, not the actual object
-    ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &busConfig, SPI_DMA_DISABLED));
+    ESP_ERROR_CHECK(spi_bus_initialize(SPI3_HOST, &busConfig, SPI_DMA_DISABLED));
     // ===================== END CONFIGURE BUS SECTION ====================== //
 
     // ===================== CONFIGURE DEVICE SECTION ======================= //
@@ -66,8 +68,10 @@ extern "C" void app_main(void)
     the contract the cc1101 expects. We will just construct the byte manually
     in the tx_buffer for transactions. According to the cc1101 datasheet we
     can see this header byte specified -
+
     Bit7   Bit6   Bit5-0
     R/W    Burst  Address(6 bits)
+    1 = Read, 0 = write. 0 = single, 1 = burst. Burst bit will keep reading memory in a block every clock cycle. 
     See section 10.2 (Register Access) for more information
     ONLY send these bits if a data sheet specifies explicit phases such as -
     [Command phase]
@@ -101,7 +105,23 @@ extern "C" void app_main(void)
     // =================== END CONFIGURE DEVICE SECTION ===================== //
 
     // =================== CONFIGURE TRANSACTION SECTION ==================== //
+    /*
+    Now, we are setting up a 'hello world' version of interacting with the cc1101.
+    Let's confirm we can read values from the device. In the data sheet, I can see that 
+    a static status register I can read from is the PARTNUM located at 0x30. The register
+    for resetting the chip is also at this address. According to the data sheet, to access
+    the status register at an overloaded register, we specify the burst bit as being 1. 
+
+    Now we can construct our entire byte to send. 1 (Read) 1 (burtst) 110000 (0x30 address in 6 bits)
+    Converted to hex, this is 0xF0. To receive an answer we must keep the master clock pulsing. We
+    can send a dummy byte after the fact.
+    */
     spi_transaction_t t = {};
+    uint8_t tx[2] = {0xF0, 0x00}; // The address of register is 0xF0. We will send this to the slave, as well as a dummy byte after
+    uint8_t rx[2] = {0x00, 0x00}; // Two bytes of buffer that we will receive back. A bit shifts in and out every clock cycle.
+    t.tx_buffer = tx;
+    t.rx_buffer = rx;
+    t.length = 16; // Two Bytes
     // Interrupt section
     // spi_device_queue_trans();
     // spi_device_get_trans_result();
@@ -110,4 +130,12 @@ extern "C" void app_main(void)
     // spi_device_polling_transmit();
     // spi_device_polling_start();
     // spi_device_polling_end();
+
+    /*
+    In the Master Slave paradigm, the slave cannot send bits unless the master is clocking
+    So in order to properly retrieve a register value, we first send the header byte telling 
+    cc1101 what to do. We will receive the answer after a few clock pulses. But in order for
+    use to receive it, the master still must be clocking. So we must send a dummy byte the 
+    next clock pulse as well. 
+    */
 }
