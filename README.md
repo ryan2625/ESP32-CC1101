@@ -28,7 +28,7 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
    - [Determining Values](#determining-spi_bus_add_device-parameters)
 5. [Register Access in the CC1101](#5-register-access-in-the-cc1101)
     - [SPI Accessible Types](#spi-accessible-types)
-   - [Expected bit format](#expected-bit-format)
+   - [Expected Bit Format](#expected-bit-format)
 6. [Interact with the Device](#6-interact-with-the-device)
    - [Method: `spi_device_polling_transmit()`](#method-spi_device_polling_transmit)
    - [Determining Values](#determining-spi_device_polling_transmit-parameters)
@@ -175,7 +175,7 @@ The CC1101 exposes three main SPI-accessible types: configuration registers, sta
 The CC1101 will always respond with a Chip Status Byte when it receives data from the master. Since the SPI protocol is a full duplex, the slave can only send bits while the master clocks it. 
 
 > For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the SPI protocol is recommended if a full-duplex is confusing.
-### Expected bit format
+### Expected Bit Format
 The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the MISO and MOSI lines every clock pulse. The CC1101 expects our transfer buffer to follow this format: 
 
 | Bit Position | Field Name | Width | Description | Values |
@@ -245,3 +245,4 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 
 
 Alternatively, you can try to send the SRES strobe right away. After, You can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+
