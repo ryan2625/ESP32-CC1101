@@ -39,11 +39,11 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
 
 ## Hardware
 
-- [CC1101 transceiver](https://www.aliexpress.us/w/wholesale-cc1101-module.html?spm=a2g0o.detail.search.0): The CC1101 is a low cost, low power sub-1 GHz RF transceiver designed for wireless applications in the 300-348 MHz, 387-464 MHz, and 779-928 MHz ISM/SRD bands. Commonly used with microcontrollers like Arduino, ESP8266, and the Flipper Zero for sub-GHz communication, it supports FSK, GFSK, MSK, and ASK modulation
+- CC1101 transceiver: The CC1101 is a low cost, low power sub-1 GHz RF transceiver designed for wireless applications in the 300-348 MHz, 387-464 MHz, and 779-928 MHz ISM/SRD bands. Commonly used with microcontrollers like Arduino, ESP8266, and the Flipper Zero for sub-GHz communication, it supports FSK, GFSK, MSK, and ASK modulation
 
-- [ESP32](https://www.aliexpress.us/w/wholesale-esp32.html?spm=a2g0o.productlist.search.0): The ESP32 is a microcontroller with integrated Wi-Fi and Bluetooth, manufactured by Espressif Systems. It is widely used in IoT (Internet of Things) projects due to its powerful 32-bit dual-core processor, high performance, and versatility in smart home and wearable devices
+- ESP32: The ESP32 is a microcontroller with integrated Wi-Fi and Bluetooth, manufactured by Espressif Systems. It is widely used in IoT (Internet of Things) projects due to its powerful 32-bit dual-core processor, high performance, and versatility in smart home and wearable devices
 
-- [Breadboard wires](https://www.aliexpress.us/w/wholesale-breadboard-wires.html?spm=a2g0o.detail.search.0): Breadboard wires (or jumper wires) are flexible or solid core wires with pins on the ends used to create temporary, solderless connections on a breadboard for prototyping circuits.
+- Breadboard wires: Breadboard wires (or jumper wires) are flexible or solid core wires with pins on the ends used to create temporary, solderless connections on a breadboard for prototyping circuits.
 ## Software
 
 - [Visual Studio Code](https://code.visualstudio.com/): A lightweight, extensible source code editor used to write and manage ESP32 projects.
@@ -171,7 +171,7 @@ extern "C" void app_main(void) {
 # 5. Register Access in the CC1101
 
 ### SPI accessible types
-The CC1101 exposes three main SPI-accessible types: configuration registers, status registers, and command strobes. Configuration registers (0x00–0x2E) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (0x30–0x3D when accessed with Burst=1) are read-only and report internal state information such as PARTNUM, VERSION, RSSI, and FIFO status. Command strobes (0x30–0x3D when accessed with Burst=0) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (SRES), enter RX (SRX), enter TX (STX), or flush FIFOs (SFTX/SFRX).The R/W bit is ignored here. Multi-byte streaming is only available for the TX and RX FIFOs (0x3F).
+The CC1101 exposes three main SPI-accessible types: configuration registers, status registers, and command strobes. Configuration registers (0x00–0x2E) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (0x30–0x3D when accessed with Burst=1) are read-only and report internal state information such as PARTNUM, VERSION, RSSI, and FIFO status. Command strobes (0x30–0x3D when accessed with Burst=0) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (SRES), enter RX (SRX), enter TX (STX), or flush FIFOs (SFTX/SFRX). See datasheet for multi-byte applicable sections.
 
 The CC1101 will always respond with a Chip Status Byte when it receives data from the master. Since the SPI protocol is a full duplex, the slave can only send bits while the master clocks it. 
 
