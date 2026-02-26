@@ -32,7 +32,7 @@ void transmit_data(spi_device_handle_t cc1101, const uint8_t* data, size_t len, 
     spi_transaction_t t = {};
     uint8_t rx[len];
     t.tx_buffer = data;
-    t.rx_buffer = rx; // rx[0] will always be the Chip Status Byte
+    t.rx_buffer = rx; // rx[0] will always be the Chip Status Byte (section 10.1 of the datasheet)
     t.length = len * 8;
     ESP_ERROR_CHECK(spi_device_polling_transmit(cc1101, &t));
     ESP_LOGI("CC1101", "Operation: %s", operation.c_str());
