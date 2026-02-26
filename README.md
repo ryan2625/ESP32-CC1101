@@ -177,7 +177,7 @@ The CC1101 will always respond with a Chip Status Byte when it receives data fro
 
 > For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the SPI protocol is recommended if a full-duplex is confusing.
 ### Expected Bit Format
-The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the MISO and MOSI lines every clock pulse. The CC1101 expects our transfer buffer to follow this format: 
+The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the MISO and MOSI lines every clock pulse. The CC1101 expects our transmit buffer to follow this format: 
 
 | Bit Position | Field Name | Width | Description | Values |
 |--------------|------------|--------|------------|--------|
