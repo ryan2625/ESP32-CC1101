@@ -1,16 +1,16 @@
-# cc1101-peripheral
+﻿# cc1101-peripheral
 
 ## Introduction
 
 This project demonstrates how to interface a CC1101 RF transceiver with an ESP32 using the ESP-IDF SPI Master driver. In this demo, we will be accessing a status register inside the CC1101 (and performing a few other operations). A successful read of this register will confirm we have set up our devices to communicate successfully. The relevant code can be found in main/main.cpp. 
 > Note: Using the ESP-IDF directly gives us more control over writing firmware, but it requires more manual setup in the process and the complexity increases quickly. If you are looking for an easier solution for writing firmware, use Arduino. 
 
-This can be accomplished in five steps:
+Writing this firmware can be accomplished in five steps:
 - Acquiring prerequisites (hardware, software)
 - Wiring the appropriate pins from the CC1101 to the ESP32
-- Initialize a SPI bus using ESP-IDF  
+- Initialize a SPI bus using the ESP-IDF  
 - Register the CC1101 as a device on that bus  
-- Perform raw SPI transactions to validate communication  
+- Perform SPI transactions to validate communication  
 
 This README will reference the [ESP32 documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html) and the official [TI CC1101 transceiver datasheet](https://www.ti.com/lit/ds/symlink/cc1101.pdf).
 
@@ -29,7 +29,7 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
    - [Determining Values](#determining-spi_bus_add_device-parameters)
 5. [Register Access in the CC1101](#5-register-access-in-the-cc1101)
     - [SPI Accessible Types](#spi-accessible-types)
-   - [Expected Bit Format](#expected-bit-format)
+   - [Expected Transmit Format](#expected-transmit-format)
 6. [Interact with the Device](#6-interact-with-the-device)
    - [Method: `spi_device_polling_transmit()`](#method-spi_device_polling_transmit)
    - [Determining Values](#determining-spi_device_polling_transmit-parameters)
@@ -39,11 +39,11 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
 
 ## Hardware
 
-- [CC1101 transceiver](https://www.aliexpress.us/w/wholesale-cc1101-module.html?spm=a2g0o.detail.search.0): The CC1101 is a low-cost, low-power sub-1 GHz RF transceiver designed for wireless applications in the 300-348 MHz, 387-464 MHz, and 779-928 MHz ISM/SRD bands. Commonly used with microcontrollers like Arduino, ESP8266, and the Flipper Zero for sub-GHz communication, it supports FSK, GFSK, MSK, and ASK modulation
+- [CC1101 transceiver](https://www.aliexpress.us/w/wholesale-cc1101-module.html?spm=a2g0o.detail.search.0): The CC1101 is a low cost, low power sub-1 GHz RF transceiver designed for wireless applications in the 300-348 MHz, 387-464 MHz, and 779-928 MHz ISM/SRD bands. Commonly used with microcontrollers like Arduino, ESP8266, and the Flipper Zero for sub-GHz communication, it supports FSK, GFSK, MSK, and ASK modulation
 
-- [ESP32](https://www.aliexpress.us/w/wholesale-esp32.html?spm=a2g0o.productlist.search.0): The ESP32 is a low-cost, low-power "system on a chip" (SoC) microcontroller with integrated Wi-Fi and Bluetooth, manufactured by Espressif Systems. It is widely used in IoT (Internet of Things) projects due to its powerful 32-bit dual-core processor, high performance, and versatility in smart home and wearable devices
+- [ESP32](https://www.aliexpress.us/w/wholesale-esp32.html?spm=a2g0o.productlist.search.0): The ESP32 is a microcontroller with integrated Wi-Fi and Bluetooth, manufactured by Espressif Systems. It is widely used in IoT (Internet of Things) projects due to its powerful 32-bit dual-core processor, high performance, and versatility in smart home and wearable devices
 
-- [Breadboard wires](https://www.aliexpress.us/w/wholesale-breadboard-wires.html?spm=a2g0o.detail.search.0): Breadboard wires (or jumper wires) are flexible or solid-core wires with pins on the ends used to create temporary, solderless connections on a breadboard for prototyping circuits.
+- [Breadboard wires](https://www.aliexpress.us/w/wholesale-breadboard-wires.html?spm=a2g0o.detail.search.0): Breadboard wires (or jumper wires) are flexible or solid core wires with pins on the ends used to create temporary, solderless connections on a breadboard for prototyping circuits.
 ## Software
 
 - [Visual Studio Code](https://code.visualstudio.com/): A lightweight, extensible source code editor used to write and manage ESP32 projects.
@@ -176,7 +176,7 @@ The CC1101 exposes three main SPI-accessible types: configuration registers, sta
 The CC1101 will always respond with a Chip Status Byte when it receives data from the master. Since the SPI protocol is a full duplex, the slave can only send bits while the master clocks it. 
 
 > For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the SPI protocol is recommended if a full-duplex is confusing.
-### Expected Bit Format
+### Expected Transmit Format
 The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the MISO and MOSI lines every clock pulse. The CC1101 expects our transmit buffer to follow this format: 
 
 | Bit Position | Field Name | Width | Description | Values |
@@ -229,7 +229,7 @@ extern "C" void app_main(void) {
 - cc1101
     - The device name we created earlier in our process
 - version_register
-    - tx_v: The Bytes we want to send to the CC1101. our first byte is 0xF1. This corresponds to the VERSION register in the CC1101 (see Table 44 above or in the datasheet). The second byte we send is a garbage byte. This needs to be included, as every status register read will return two bytes: a chip status byte and the register value byte. In order to receive 2 bytes, we must send 2 bytes as well (due to the nature of the SPI protocol being a full-duplex).
+    - tx_v: The Bytes we want to send to the CC1101. our first byte is 0xF1. This corresponds to the VERSION register in the CC1101 (see Table 44 above or in the datasheet). The second byte is a dummy byte used to clock out the register value from the slave. This needs to be included, as every status register read will return two bytes: a chip status byte and the register value byte. In order to receive 2 bytes, we must send 2 bytes as well (due to the nature of the SPI protocol being a full-duplex).
     - rx_v: This buffer will be filled with the response of the slave. Again, we include two bytes in the buffer because that is what we expect to receive when we send two bytes.
     - length: We are sending two bytes, so that equals 16 bits
 
@@ -238,7 +238,7 @@ After calling this method, simply logging out the version_register receive buffe
 ### CC1101 Initialization Procedure
 Section 19.1 of the datasheet specifies the required sequence for powering up the CC1101. The system must be reset every time you turn on the power supply.
 
-The government-official way of doing this is as follows:
+The government-approved method of accomplishing this is as follows:
 - Toggle CSn low–high
 - Wait for SO to go low
 - Send SRES
