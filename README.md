@@ -1,4 +1,4 @@
-﻿# cc1101-peripheral
+﻿# ESP32-CC1101
 
 ## Introduction
 
@@ -247,5 +247,6 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 
 
 Alternatively, you can try to send the SRES strobe right away. After, You can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+
 
 
