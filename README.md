@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project demonstrates how to interface a CC1101 RF transceiver with an ESP32 using the ESP-IDF SPI Master driver. In this demo, we will be accessing a status register inside the CC1101 (and performing a few other operations). A successful read of this register will confirm we have set up our devices to communicate successfully. The relevant code can be found in main/main.cpp. 
+This project demonstrates how to interface a CC1101 RF transceiver with an ESP32 using the ESP-IDF SPI Master driver. In this demo, we will be accessing a status register inside the CC1101 (and performing a few other operations). A successful read of this register will confirm we have set up our devices to communicate successfully. The relevant code can be found in `main/main.cpp`. 
 > Note: We use ESP-IDF here for full control and learning purposes, but Arduino can be a simpler option for long-term development.
 
 Writing this firmware can be accomplished in five steps:
@@ -77,7 +77,7 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
 > [!WARNING]
 > Ensure VCC on the CC1101 is connected to 3.3V only. Applying 5V can damage the chip.
 
-Once everything is wired up and the prerequisites are complete, we can begin writing firmware using ESP-IDF. If you're new to ESP-IDF, there are several videos online that can assist with setting up a project from scratch. I recommend watching [this one](https://www.youtube.com/watch?v=oHHOCdmLiII) and reading the official documentation for [getting started with ESP-IDF](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html). After your environment is ready, open main.cpp and we will begin implementing the SPI configuration.
+Once everything is wired up and the prerequisites are complete, we can begin writing firmware using ESP-IDF. If you're new to ESP-IDF, there are several videos online that can assist with setting up a project from scratch. I recommend watching [this one](https://www.youtube.com/watch?v=oHHOCdmLiII) and reading the official documentation for [getting started with ESP-IDF](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/index.html). After your environment is ready, open `main.cpp` and we will begin implementing the SPI configuration.
 # 3. Initialize an SPI Bus
 
 ### Method: `spi_bus_initialize()`
@@ -231,7 +231,7 @@ extern "C" void app_main(void) {
     ...
 }
 ```
-> Note: This functionality has been refactored into helper functions in main.cpp.
+> Note: This functionality has been refactored into helper functions in `main.cpp`.
 ### Determining spi_device_polling_transmit parameters 
 - cc1101
     - The device name we created earlier in our process.
@@ -246,14 +246,15 @@ After calling this method, simply logging out the version_register receive buffe
 Section 19.1 of the datasheet specifies the required sequence for powering up the CC1101. The system must be reset every time you turn on the power supply.
 
 The government-approved method of accomplishing this is as follows:
-- Toggle CSn low–high
-- Wait for SO to go low
+- Pull CSn LOW, then drive it HIGH again
+- Wait for MISO to go LOW
 - Send `SRES`
 
-This would require you to set spics_io_num to -1 when adding a device to the bus. Then, you would have to control the CSn manually.
+This would require you to set spics_io_num to -1 when adding a device to the bus. Then, you would have to control the CSn manually. As specified by the data sheet in section 10.1, CSn will have to stay pulled low during any SPI transaction. This behavior is visualized in figure 15 of the datasheet and displayed above (in `main/assets/transfer_timing.png`)
 
 > [!TIP]
-> Alternatively, you can try to send the `SRES` strobe right away. After sending `SRES`, you can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with `TXFIFO_UNDERFLOW` (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes `SRES`, `SIDLE`, and `SFTX` in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+> Alternatively, you can try to send the `SRES` strobe right away. After sending `SRES`, you can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with `TXFIFO_UNDERFLOW` (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes `SRES`, `SIDLE`, and `SFTX` in that order. After this sequence, your device should be ready to use. See `strobe_reset` in `main.cpp`.
+
 
 
 
