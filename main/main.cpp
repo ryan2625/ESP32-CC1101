@@ -18,7 +18,7 @@ extern "C" {
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 }
-
+// Register values from the CC1101 datasheet
 constexpr uint8_t CC1101_STROBE_SRES = 0x30;
 constexpr uint8_t CC1101_STROBE_SIDLE = 0x36;
 constexpr uint8_t CC1101_STROBE_SFTX = 0x3B;
@@ -56,7 +56,7 @@ void strobe_reset(spi_device_handle_t cc1101) {
         1,
         "SIDLE"
     );
-    // Flush transmit buffer: in order to send the SFTX strobe, CC1101 must be in idle mode
+    // Flush transmit buffer: in order to send the SFTX strobe, CC1101 must be in certain states (like idle mode)
     transmit_data(
         cc1101,
         (uint8_t[]){CC1101_STROBE_SFTX},
@@ -89,7 +89,7 @@ extern "C" void app_main(void)
     deviceConfig.mode = 0;
     deviceConfig.clock_speed_hz = 1000000; // 1 MHz
     deviceConfig.spics_io_num = GPIO_NUM_5; // Chip Select Pin
-    deviceConfig.queue_size = 1; 
+    deviceConfig.queue_size = 1; // Program doesn't queue anything, only synchronous methods used
     ESP_ERROR_CHECK(spi_bus_add_device(SPI3_HOST, &deviceConfig, &cc1101));
     // =================== END CONFIGURE DEVICE SECTION ===================== //
 
@@ -100,8 +100,8 @@ extern "C" void app_main(void)
     transmit_data(
         cc1101,
         (uint8_t[]){CC1101_STATUS_PARTNUM, CC1101_DUMMY_BYTE},
-        2,
-        "PARTNUM"
+        2, // How many bytes we are sending
+        "PARTNUM" 
     );
     // Retrieve the VERSION register value
     transmit_data(
