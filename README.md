@@ -39,9 +39,9 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
 
 ## Hardware
 
-- CC1101 transceiver: The CC1101 is a low cost, low power sub-1 GHz RF transceiver designed for wireless applications in the 300-348 MHz, 387-464 MHz, and 779-928 MHz ISM/SRD bands. Commonly used with microcontrollers like Arduino, ESP8266, and the Flipper Zero for sub-GHz communication, it supports FSK, GFSK, MSK, and ASK modulation
+- CC1101 transceiver: The CC1101 is a low cost, low power sub-1 GHz RF transceiver designed for wireless applications in the 300-348 MHz, 387-464 MHz, and 779-928 MHz ISM/SRD bands. Commonly used with microcontrollers like Arduino, ESP8266, and the Flipper Zero for sub-GHz communication, it supports FSK, GFSK, MSK, and ASK modulation.
 
-- ESP32: The ESP32 is a microcontroller with integrated Wi-Fi and Bluetooth, manufactured by Espressif Systems. It is widely used in IoT (Internet of Things) projects due to its powerful 32-bit dual-core processor, high performance, and versatility in smart home and wearable devices
+- ESP32: The ESP32 is a microcontroller with integrated Wi-Fi and Bluetooth, manufactured by Espressif Systems. It is widely used in IoT (Internet of Things) projects due to its powerful 32-bit dual-core processor, high performance, and versatility in smart home and wearable devices.
 
 - Breadboard wires: Breadboard wires (or jumper wires) are flexible or solid core wires with pins on the ends used to create temporary, solderless connections on a breadboard for prototyping circuits.
 ## Software
@@ -252,6 +252,7 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 
 > [!TIP]
 > Alternatively, you can try to send the SRES strobe right away. After, You can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+
 
 
 
