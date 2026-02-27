@@ -58,8 +58,9 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
 ### CC1101 Pinout
  ![CC1101 Pinout](assets/cc1101_pinout.png)
 ### ESP32 pinout
-Note: The pinout can change based on the type of ESP32 you own.
  ![ESP32 Pinout](assets/esp32_pinout.png)
+
+> Note: The pinout can change based on the type of ESP32 and CC1101 module you own. Verify your board's pinout before wiring.
 
 ### Required SPI Connections
 
@@ -253,6 +254,7 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 
 > [!TIP]
 > Alternatively, you can try to send the SRES strobe right away. After, You can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+
 
 
 
