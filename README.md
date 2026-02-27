@@ -174,7 +174,7 @@ extern "C" void app_main(void) {
 # 5. Register Access in the CC1101
 
 ### SPI accessible types
-The CC1101 exposes three main SPI-accessible types: configuration registers, status registers, and command strobes. Configuration registers (`0x00–0x2E`) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (`0x30–0x3D` when accessed with Burst=`1`) are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status. Command strobes (`0x30–0x3D` when accessed with Burst=`0`) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (SRES), enter RX (SRX), enter TX (STX), or flush FIFOs (SFTX/SFRX). See the datasheet sections on FIFO and burst transfers for multi-byte transactions.
+The CC1101 exposes three main SPI-accessible types: configuration registers, status registers, and command strobes. Configuration registers (`0x00–0x2E`) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (`0x30–0x3D` when accessed with Burst=`1`) are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status. Command strobes (`0x30–0x3D` when accessed with Burst=`0`) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (`SRES`), enter RX (`SRX`), enter TX (`STX`), or flush FIFOs (`SFTX/SFRX`). See the datasheet sections on FIFO and burst transfers for multi-byte transactions.
 
 ### Expected Transmit Format
 The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the MISO and MOSI lines every clock pulse. The CC1101 expects our transmit buffer to follow this format: 
@@ -253,7 +253,8 @@ The government-approved method of accomplishing this is as follows:
 This would require you to set spics_io_num to -1 when adding a device to the bus. Then, you would have to control the CSn manually.
 
 > [!TIP]
-> Alternatively, you can try to send the SRES strobe right away. After sending SRES, you can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+> Alternatively, you can try to send the `SRES` strobe right away. After sending `SRES`, you can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with `TXFIFO_UNDERFLOW` (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes `SRES`, `SIDLE`, and `SFTX` in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+
 
 
 
