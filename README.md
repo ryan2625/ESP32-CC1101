@@ -191,11 +191,14 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
     - For example, address 0x30 contains both the command strobe for resetting the device and the location where the PARTNUM value lives. If we just send the byte 0x30, we would activate the reset sequence on the device. If we send the byte 0xF0 (which is 0x30 with a burst bit attached at bit 6), we would receive back the PARTNUM value. 
 - Bit position 5-0 is the address that we want to interact with. the first two bits in the byte address are not included and replaced by the R/W and burst bit. Below are some relevant addresses with different command strobes (Table 42) and status register values (Table 44). 
 
-#### Table 42
-![Command Strobes](assets/command_strobes.png)
+<div align="center">
+<strong>Table 42: Command Strobes</strong><br>
+<img src="assets/command_strobes.png" width="600"/>
+<br><br>
+<strong>Table 44: Status Registers</strong><br>
+<img src="assets/status_registers.png" width="600"/>
 
-#### Table 44
-![CC1101 Pinout](assets/status_registers.png)
+</div>
 
 >  Example: To read the value in the PARTNUM register, we would send 1 (read) 1 (burst bit for overloaded register) 110000 (the address where this register is located). 1111 0000 = 0xF0. Since we can only receive bits while the master is sending, we would send two bytes 0xF0 0x00 and receive two bytes corresponding to the Chip Status Byte and the actual register value.
 # 6. Interact with the Device
@@ -248,6 +251,7 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 
 
 Alternatively, you can try to send the SRES strobe right away. After, You can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+
 
 
 
