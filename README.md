@@ -75,7 +75,7 @@ Note: The pinout can change based on the type of ESP32 you own.
 | GDO2       | Optional / Not Used |
 > Note: Ensure VCC on the CC1101 is connected to 3.3V only. Applying 5V can damage the chip.
 
-Once everything is wired up and the prerequisites are complete, we can begin writing the firmware using ESP-IDF. If you're new to ESP-IDF, there are several videos online that can assist with setting up a project from scratch. I recommend [this one](https://www.youtube.com/watch?v=oHHOCdmLiII). After your environment is ready, open main.cpp and we will begin implementing the SPI configuration.
+Once everything is wired up and the prerequisites are complete, we can begin writing firmware using ESP-IDF. If you're new to ESP-IDF, there are several videos online that can assist with setting up a project from scratch. I recommend [this one](https://www.youtube.com/watch?v=oHHOCdmLiII). After your environment is ready, open main.cpp and we will begin implementing the SPI configuration.
 # 3. Initialize an SPI Bus
 
 ### Method: `spi_bus_initialize()`
@@ -200,6 +200,7 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
 
 </div>
 
+> [!IMPORTANT]
 >  Example: To read the value in the PARTNUM register, we would send 1 (read) 1 (burst bit for overloaded register) 110000 (the address where this register is located). 1111 0000 = 0xF0. Since we can only receive bits while the master is sending, we would send two bytes 0xF0 0x00 and receive two bytes corresponding to the Chip Status Byte and the actual register value.
 # 6. Interact with the Device
 
@@ -249,8 +250,9 @@ The government-approved method of accomplishing this is as follows:
 
 This would require you to set spics_io_num to -1 when adding a device to the bus. Then, you would have to control the CSn manually.
 
+> [!TIP]
+> Alternatively, you can try to send the SRES strobe right away. After, You can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
 
-Alternatively, you can try to send the SRES strobe right away. After, You can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
 
 
 
