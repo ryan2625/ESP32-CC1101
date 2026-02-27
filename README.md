@@ -116,10 +116,10 @@ extern "C" void app_main(void) {
 - SPI3_HOST
     - The SPI peripheral you are selecting. There are 4 SPI peripherals on the classic ESP32. Two are tied to internal ESP32 operations, while SPI2_HOST and SPI3_HOST are available for public interfacing.
 - busConfig
-    - mosi_io_num: The GPIO pin that connects the MOSI pin
-    - miso_io_num: The GPIO pin that connects the MISO pin
-    - sclk_io_num: The GPIO pin that connects the SCLK pin
-    - quadwp & quadhd: Set to -1 indicating we are not using these
+    - mosi_io_num: The GPIO pin that connects the MOSI pin.
+    - miso_io_num: The GPIO pin that connects the MISO pin.
+    - sclk_io_num: The GPIO pin that connects the SCLK pin.
+    - quadwp & quadhd: Set to -1 indicating we are not using these.
 - SPI_DMA_DISABLED
     - Controls whether the SPI driver uses Direct Memory Access for transfers. DMA can be disabled for small and simple transfers. 
 > Note: If we were to set SPI_DMA_CH_AUTO, we would have to change how we manage memory such as using `uint8_t* tx = (uint8_t*) heap_caps_malloc(64, MALLOC_CAP_DMA);`. Further reading on DMA is recommended.
@@ -161,12 +161,12 @@ extern "C" void app_main(void) {
 ###  Determining spi_bus_add_device parameters
 
 - SPI3_HOST
-    - Use the same host that you specified in the bus configuration step
+    - Use the same host that you specified in the bus configuration step.
 - deviceConfig
-    - command, address, & dummy bits: The CC1101 does not have any phases specified in a transfer (see section 10: 4-wire Serial Configuration and Data Interface in the CC1101 datasheet)
+    - command, address, & dummy bits: The CC1101 does not have any phases specified in a transfer (see section 10: 4-wire Serial Configuration and Data Interface in the CC1101 datasheet).
     - clock_speed_hz: Table 22 in the CC1101 datasheet specifies the max frequency as 6-10 MHz depending on the action. This value should be lower than that.
     - spics_io_num: The GPIO pin we wired CSn to. Use -1 if you want to control the chip select manually. If you are to control it manually, read section 10 of the CC1101 datasheet where it specifies the CSn pin values.
-    - queue_size: Set to 1 as our program is only using synchronous methods (such as spi_device_polling_transmit())
+    - queue_size: Set to 1 as our program is only using synchronous methods (such as spi_device_polling_transmit()).
     - mode: The SPI mode is determined by a combination of the Clock Polarity (CPOL) and the Clock Phase (CPHA). From the diagram (figure 15 in the CC1101 datasheet), we can see the SCLK line starts and idles low. So the CPOL is zero. We can also see that the lines indicate data is sampled on the rising edge of the SCLK signal, meaning the CPHA is zero. A combination of CPOL = 0 and CPHA = 0 means the SPI mode is 0. ![CC1101 Pinout](assets/timing_transfer.png)
 - cc1101
     - An arbitrary name that should correspond to the device you are using. We will reference this in our transactions. 
@@ -174,7 +174,7 @@ extern "C" void app_main(void) {
 # 5. Register Access in the CC1101
 
 ### SPI accessible types
-The CC1101 exposes three main SPI-accessible types: configuration registers, status registers, and command strobes. Configuration registers (0x00–0x2E) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (0x30–0x3D when accessed with Burst=1) are read-only and report internal state information such as PARTNUM, VERSION, RSSI, and FIFO status. Command strobes (0x30–0x3D when accessed with Burst=0) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (SRES), enter RX (SRX), enter TX (STX), or flush FIFOs (SFTX/SFRX). See the datasheet sections on FIFO and burst transfers for multi-byte transactions
+The CC1101 exposes three main SPI-accessible types: configuration registers, status registers, and command strobes. Configuration registers (0x00–0x2E) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (0x30–0x3D when accessed with Burst=1) are read-only and report internal state information such as PARTNUM, VERSION, RSSI, and FIFO status. Command strobes (0x30–0x3D when accessed with Burst=0) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (SRES), enter RX (SRX), enter TX (STX), or flush FIFOs (SFTX/SFRX). See the datasheet sections on FIFO and burst transfers for multi-byte transactions.
 
 The CC1101 will always respond with a Chip Status Byte when it receives data from the master. Since the SPI protocol is a full duplex, the slave can only send bits while the master clocks it. 
 
@@ -188,7 +188,7 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
 | 6 | Burst | 1 bit | Determines single or multi-byte access | `0` = Single access<br>`1` = Burst access |
 | 5–0 | Address | 6 bits | Register address or command strobe | `0x00 – 0x3F` |
 
-- Bit position 7 tells the CC1101 if we are reading an address or writing to an address
+- Bit position 7 tells the CC1101 if we are reading an address or writing to an address.
 - Bit position 6 specifies if we are using single or multi-byte access. There is also a special use case for this bit: if a register is overloaded, this specifies if we want to access the value at a status register by setting the bit to 1 or we want to send a command strobe by setting this bit to 0. 
     - For example, address 0x30 contains both the command strobe for resetting the device and the location where the PARTNUM value lives. If we just send the byte 0x30, we would activate the reset sequence on the device. If we send the byte 0xF0 (which is 0x30 with a burst bit set to 1 at bit 6), we would receive back the PARTNUM value. 
 - Bit position 5-0 is the address that we want to interact with. the first two bits in the byte address are not included and replaced by the R/W and burst bit. Below are some relevant addresses with different command strobes (Table 42) and status register values (Table 44). 
@@ -234,11 +234,11 @@ extern "C" void app_main(void) {
 > Note: This functionality has been refactored into helper functions in main.cpp
 ### Determining spi_device_polling_transmit parameters 
 - cc1101
-    - The device name we created earlier in our process
+    - The device name we created earlier in our process.
 - version_register
     - tx_v: The Bytes we want to send to the CC1101. our first byte is 0xF1. This corresponds to the VERSION register in the CC1101 (see Table 44 above or in the datasheet). The second byte is a dummy byte used to clock out the register value from the slave. This needs to be included, as every status register read will return two bytes: a chip status byte and the register value byte. In order to receive 2 bytes, we must send 2 bytes as well (due to the nature of the SPI protocol being a full-duplex).
     - rx_v: This buffer will be filled with the response of the slave. Again, we include two bytes in the buffer because that is what we expect to receive when we send two bytes.
-    - length: We are sending two bytes, so that equals 16 bits
+    - length: We are sending two bytes, so that equals 16 bits.
 
 After calling this method, simply logging out the version_register receive buffer will show us the value contained inside the version register. As stated before, the first byte is a chip status byte. So we will receive a chip status byte located in rx_v[0] and the actual register value in rx_v[1]. The expected value in the version register will be 0x14. 
 
@@ -254,6 +254,7 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 
 > [!TIP]
 > Alternatively, you can try to send the SRES strobe right away. After, You can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+
 
 
 
