@@ -51,7 +51,7 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
 - [ESP-IDF (Espressif IoT Development Framework)](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/): The official development framework for ESP32, providing the toolchain, build system, drivers, and APIs.
 
 - [Espressif IDF Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=espressif.esp-idf-extension): An extension that integrates ESP-IDF into VS Code, enabling build, flash, monitor, and project management features.
-- [Python 3.x](https://www.python.org): Ensure your python version is compatible with the latest version of ESP-IDF.
+- [Python 3.x](https://www.python.org): Ensure your Python version is compatible with the latest version of ESP-IDF.
 
 # 2. Wiring
 
@@ -172,11 +172,11 @@ extern "C" void app_main(void) {
 # 5. Register Access in the CC1101
 
 ### SPI accessible types
-The CC1101 exposes three main SPI-accessible types: configuration registers, status registers, and command strobes. Configuration registers (0x00–0x2E) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (0x30–0x3D when accessed with Burst=1) are read-only and report internal state information such as PARTNUM, VERSION, RSSI, and FIFO status. Command strobes (0x30–0x3D when accessed with Burst=0) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (SRES), enter RX (SRX), enter TX (STX), or flush FIFOs (SFTX/SFRX). See datasheet for multi-byte applicable sections.
+The CC1101 exposes three main SPI-accessible types: configuration registers, status registers, and command strobes. Configuration registers (0x00–0x2E) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (0x30–0x3D when accessed with Burst=1) are read-only and report internal state information such as PARTNUM, VERSION, RSSI, and FIFO status. Command strobes (0x30–0x3D when accessed with Burst=0) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (SRES), enter RX (SRX), enter TX (STX), or flush FIFOs (SFTX/SFRX). See the datasheet sections on FIFO and burst transfers for multi-byte transactions
 
 The CC1101 will always respond with a Chip Status Byte when it receives data from the master. Since the SPI protocol is a full duplex, the slave can only send bits while the master clocks it. 
 
-> For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the SPI protocol is recommended if a full-duplex is confusing.
+> For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the SPI protocol is recommended if a full-duplex SPI is unfamiliar.
 ### Expected Transmit Format
 The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the MISO and MOSI lines every clock pulse. The CC1101 expects our transmit buffer to follow this format: 
 
@@ -238,7 +238,7 @@ extern "C" void app_main(void) {
     - rx_v: This buffer will be filled with the response of the slave. Again, we include two bytes in the buffer because that is what we expect to receive when we send two bytes.
     - length: We are sending two bytes, so that equals 16 bits
 
-After calling this method, simply logging out the version_register receive buffer will show us the value contained inside the version register. As stated before, the first byte is a chip status byte. So we will receive a chip status byte located in rx_v[0] and the actual register value in rx_v[1]. The standard value in the version register will be 0x14. 
+After calling this method, simply logging out the version_register receive buffer will show us the value contained inside the version register. As stated before, the first byte is a chip status byte. So we will receive a chip status byte located in rx_v[0] and the actual register value in rx_v[1]. The expected value in the version register will be 0x14. 
 
 ### CC1101 Initialization Procedure
 Section 19.1 of the datasheet specifies the required sequence for powering up the CC1101. The system must be reset every time you turn on the power supply.
@@ -252,6 +252,7 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 
 > [!TIP]
 > Alternatively, you can try to send the SRES strobe right away. After, You can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with TXFIFO_UNDERFLOW (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes SRES, SIDLE, and SFTX in that order. After this sequence, your device should be ready to use. See `strobe_reset` in main.cpp.
+
 
 
 
