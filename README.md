@@ -9,8 +9,8 @@ Writing this firmware can be accomplished in five steps:
 - Acquiring prerequisites (hardware, software)
 - Wiring the appropriate pins from the CC1101 to the ESP32
 - Initialize an SPI bus using ESP-IDF  
-- Register the CC1101 as a device on that bus  
-- Perform SPI transactions to validate communication  
+- Register the CC1101 as a device on that bus
+- Transmit and receive data to and from the CC1101
 
 This README will reference the [ESP32 documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html) and the official [TI CC1101 transceiver datasheet](https://www.ti.com/lit/ds/symlink/cc1101.pdf). Basic programming experience, familiarity with the [SPI interface](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html), and development board knowledge (Raspberry Pi, Arduino, ESP32) will be helpful to follow along.
 
@@ -82,7 +82,7 @@ Once everything is wired up and the prerequisites are complete, we can begin wri
 
 ### Method: `spi_bus_initialize()`
 
-An SPI bus is essentially a group of shared wires. In our case, the wires map to the four pins of the SPI protocol. This includes the MOSI (Master Out, Slave In), MISO (Master In, Slave Out), SCK (Clock Signal), and CSn (Chip Select) lines. `spi_bus_initialize` tells the ESP32 to configure the SPI bus according to our specifications including which SPI controller to select and which pins we are using for this bus. We initialize the SPI bus using:
+An SPI bus is essentially a group of shared wires that transfers data. In our case, the wires map to the four pins of the SPI protocol. This includes the MOSI (Master Out, Slave In), MISO (Master In, Slave Out), SCK (Clock Signal), and CSn (Chip Select) lines. `spi_bus_initialize` tells the ESP32 to configure the SPI bus according to our specifications including which SPI controller to select and which pins we are using for this bus. We initialize the SPI bus using:
 
 - [`spi_bus_initialize()`](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html#_CPPv418spi_bus_initialize17spi_host_device_tPK16spi_bus_config_t14spi_dma_chan_t)
 
@@ -254,6 +254,7 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 
 > [!TIP]
 > Alternatively, you can try to send the `SRES` strobe right away. After sending `SRES`, you can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with `TXFIFO_UNDERFLOW` (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes `SRES`, `SIDLE`, and `SFTX` in that order. After this sequence, your device should be ready to use. See `strobe_reset` in `main.cpp`.
+
 
 
 
