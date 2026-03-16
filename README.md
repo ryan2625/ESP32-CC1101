@@ -34,6 +34,7 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
    - [Method: `spi_device_polling_transmit()`](#method-spi_device_polling_transmit)
    - [Determining Values](#determining-spi_device_polling_transmit-parameters)
    - [CC1101 Initialization Procedure](#cc1101-initialization-procedure)
+7. [Further Reading](#7-further-reading)
 
 # 1. Prerequisites
 
@@ -255,6 +256,8 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 > [!TIP]
 > Alternatively, you can try to send the `SRES` strobe right away. After sending `SRES`, you can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with `TXFIFO_UNDERFLOW` (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes `SRES`, `SIDLE`, and `SFTX` in that order. After this sequence, your device should be ready to use. See `strobe_reset` in `main.cpp`.
 
+# 7. Further Reading
+The [next guide in this series](https://github.com/ryan2625/CC1101-TX?tab=readme-ov-file#introduction) focuses on transmitting a signal with the ESP-IDF and the CC1101. It is noticeably more complex, but a great way to learn more about interacting with these devices!
 
 
 
