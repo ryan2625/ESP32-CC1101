@@ -1,5 +1,9 @@
 ﻿# ESP32-CC1101
 
+<div align="center">
+<img src="Assets/cc1101.png" width="50%">
+</div>
+
 ## Introduction
 
 This project demonstrates how to interface a CC1101 RF transceiver with an ESP32 using the ESP-IDF SPI Master driver. In this demo, we will be accessing a status register inside the CC1101 (and performing a few other operations). A successful read of this register will confirm we have set up our devices to communicate successfully. The relevant code can be found in `main/main.cpp`. 
@@ -175,7 +179,7 @@ extern "C" void app_main(void) {
 # 5. Register Access in the CC1101
 
 ### SPI accessible types
-The CC1101 exposes three main SPI-accessible types: configuration registers, status registers, and command strobes. Configuration registers (`0x00–0x2E`) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (`0x30–0x3D` when accessed with Burst=`1`) are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status. Command strobes (`0x30–0x3D` when accessed with Burst=`0`) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (`SRES`), enter RX (`SRX`), enter TX (`STX`), or flush FIFOs (`SFTX/SFRX`). See the datasheet sections on FIFO and burst transfers for multi-byte transactions.
+The CC1101 exposes three main SPI-accessible types: configuration [registers](https://en.wikipedia.org/wiki/Hardware_register), status registers, and command strobes. Configuration registers (`0x00–0x2E`) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (`0x30–0x3D` when accessed with Burst=`1`) are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status. Command strobes (`0x30–0x3D` when accessed with Burst=`0`) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (`SRES`), enter RX (`SRX`), enter TX (`STX`), or flush FIFOs (`SFTX/SFRX`). See the datasheet sections on FIFO and burst transfers for multi-byte transactions.
 
 ### Expected Transmit Format
 The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the MISO and MOSI lines every clock pulse. The CC1101 expects our transmit buffer to follow this format: 
@@ -257,7 +261,7 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 > Alternatively, you can try to send the `SRES` strobe right away. After sending `SRES`, you can either wait a few ms for the crystal oscillator to stabilize, or you can follow by flushing the transmit buffer (which you can only do in idle mode) as there are some cases where the system starts in a state with `TXFIFO_UNDERFLOW` (see Table 23 in the datasheet). So the entire startup sequence will be to send the command strobes `SRES`, `SIDLE`, and `SFTX` in that order. After this sequence, your device should be ready to use. See `strobe_reset` in `main.cpp`.
 
 # 7. Further Reading
-The [next guide in this series](https://github.com/ryan2625/CC1101-TX?tab=readme-ov-file#introduction) focuses on transmitting a signal with the ESP-IDF and the CC1101. It is noticeably more complex, but a great way to learn more about interacting with these devices!
+The [next guide in this series](https://github.com/ryan2625/CC1101-TX?tab=readme-ov-file#introduction) focuses on transmitting a signal with the ESP-IDF and the CC1101 and interpreting datasheets. It is noticeably more complex, but a great way to gain a deeper understanding about interacting with embedded devices!
 
 
 
