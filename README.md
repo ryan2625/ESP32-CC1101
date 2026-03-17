@@ -1,7 +1,7 @@
 ﻿# ESP32-CC1101
 
 <div align="center">
-<img src="Assets/cc1101.png" width="50%">
+<img src="assets/cc1101.png" width="50%">
 </div>
 
 ## Introduction
