@@ -197,10 +197,10 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
 
 <div align="center">
 <strong>Table 42: Command Strobes</strong><br>
-<img src="assets/command_strobes.png" width="600"/>
+<img src="assets/command_strobes.png" width="90%"/>
 <br><br>
 <strong>Table 44: Status Registers</strong><br>
-<img src="assets/status_registers.png" width="600"/>
+<img src="assets/status_registers.png" width="90%"/>
 
 </div>
 
