@@ -86,7 +86,7 @@ Once everything is wired up and the prerequisites are complete, we can begin wri
 
 ### Method: `spi_bus_initialize()`
 
-An SPI bus is essentially a group of shared wires that transfers data. In our case, the wires map to the four pins of the SPI protocol. This includes the MOSI (Master Out, Slave In), MISO (Master In, Slave Out), SCK (Clock Signal), and CSn (Chip Select) lines. `spi_bus_initialize` tells the ESP32 to configure the SPI bus according to our specifications including which SPI controller to select and which pins we are using for this bus. We initialize the SPI bus using:
+An SPI bus is essentially a group of shared wires that transfer data. In our case, the wires map to the four pins of the SPI protocol. This includes the MOSI (Master Out, Slave In), MISO (Master In, Slave Out), SCK (Clock Signal), and CSn (Chip Select) lines. `spi_bus_initialize` tells the ESP32 to configure the SPI bus according to our specifications including which SPI controller to select and which pins we are using for this bus. We initialize the SPI bus using:
 
 - [`spi_bus_initialize()`](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html#_CPPv418spi_bus_initialize17spi_host_device_tPK16spi_bus_config_t14spi_dma_chan_t)
 
@@ -178,10 +178,10 @@ extern "C" void app_main(void) {
 # 5. Register Access in the CC1101
 
 ### SPI accessible types
-The CC1101 exposes three main SPI-accessible types: configuration [registers](https://en.wikipedia.org/wiki/Hardware_register), status registers, and command strobes. Configuration registers (`0x00–0x2E`) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (`0x30–0x3D` when accessed with Burst=`1`) are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status. Command strobes (`0x30–0x3D` when accessed with Burst=`0`) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio, such as reset (`SRES`), enter RX (`SRX`), enter TX (`STX`), or flush FIFOs (`SFTX/SFRX`). See the datasheet sections on FIFO and burst transfers for multi-byte transactions.
+The CC1101 exposes three main SPI-accessible types: configuration [registers](https://en.wikipedia.org/wiki/Hardware_register), status registers, and command strobes. Configuration registers (`0x00–0x2E`) are read/write and control radio parameters like frequency, modulation, and packet behavior. Status registers (`0x30–0x3D` when accessed with Burst=`1`) are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status. Command strobes (`0x30–0x3D` when accessed with Burst=`0`) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio such as system reset (`SRES`), enter receiver mode (`SRX`), or enter transmit mode (`STX`). See the datasheet sections on FIFO and burst transfers for multi-byte transactions.
 
 ### Expected Transmit Format
-The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the MISO and MOSI lines every clock pulse. The CC1101 expects our transmit buffer to follow this format: 
+The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the MISO and MOSI lines every clock pulse. The CC1101 expects our transmit [buffer](https://en.wikipedia.org/wiki/Data_buffer) to follow this format: 
 
 | Bit Position | Field Name | Width | Description | Values |
 |--------------|------------|--------|------------|--------|
@@ -190,7 +190,7 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
 | 5–0 | Address | 6 bits | Register address or command strobe | `0x00 – 0x3F` |
 
 - Bit position 7 tells the CC1101 if we are reading an address or writing to an address.
-- Bit position 6 specifies if we are using single or multi-byte access. There is also a special use case for this bit: if a register is overloaded, this specifies if we want to access the value at a status register by setting the bit to `1` or we want to send a command strobe by setting this bit to `0`. 
+- Bit position 6 specifies if we are using single or multi-byte access. There is also a special use case for this bit: if a register is overloaded where the same address is used for multiple purposes, this specifies if we want to access the value at a status register by setting the bit to `1` or we want to send a command strobe by setting this bit to `0`. 
     - For example, address `0x30` contains both the command strobe for resetting the device and the location where the `PARTNUM` value lives. If we just send the byte `0x30`, we would activate the reset sequence on the device. If we send the byte `0xF0` (which is `0x30` with a burst bit set to `1` at bit 6), we would receive back the `PARTNUM` value. 
 - Bit position 5-0 is the address that we want to interact with. The first two bits in the byte address are not included and replaced by the R/W and burst bits. Below are some relevant addresses with different command strobes (Table 42) and status register values (Table 44). 
 
