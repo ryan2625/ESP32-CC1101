@@ -190,7 +190,7 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
 | 5–0 | Address | 6 bits | Register address or command strobe | `0x00 – 0x3F` |
 
 - Bit position 7 tells the CC1101 if we are reading an address or writing to an address.
-- Bit position 6 specifies if we are using single or multi-byte access. There is also a special use case for this bit: if a register is overloaded where the same address is used for multiple purposes, this specifies if we want to access the value at a status register by setting the bit to `1` or we want to send a command strobe by setting this bit to `0`. 
+- Bit position 6 specifies if we are using single or multi-byte access. There is also a special use case for this bit: if a register is overloaded where the same address is used for multiple purposes, this specifies if we want to access the value at a status register by setting the bit to `1` or if we want to send a command strobe by setting this bit to `0`. 
     - For example, address `0x30` contains both the command strobe for resetting the device and the location where the `PARTNUM` value lives. If we just send the byte `0x30`, we would activate the reset sequence on the device. If we send the byte `0xF0` (which is `0x30` with a burst bit set to `1` at bit 6), we would receive back the `PARTNUM` value. 
 - Bit position 5-0 is the address that we want to interact with. The first two bits in the byte address are not included and replaced by the R/W and burst bits. Below are some relevant addresses with different command strobes (Table 42) and status register values (Table 44). 
 
