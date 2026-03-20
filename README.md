@@ -105,8 +105,8 @@ This function requires:
 
 extern "C" void app_main(void) {
     spi_bus_config_t busConfig = {};
-    busConfig.`MOSI`_io_num = GPIO_NUM_23;
-    busConfig.`MISO`_io_num = GPIO_NUM_19;
+    busConfig.MOSI_io_num = GPIO_NUM_23;
+    busConfig.MISO_io_num = GPIO_NUM_19;
     busConfig.sclk_io_num = GPIO_NUM_18;
     busConfig.quadwp_io_num = -1; 
     busConfig.quadhd_io_num = -1;
@@ -120,8 +120,8 @@ extern "C" void app_main(void) {
 - SPI3_HOST
     - The SPI peripheral you are selecting. There are four SPI peripherals on the classic ESP32. Two are tied to internal ESP32 operations, while `SPI2_HOST` and `SPI3_HOST` are available for public interfacing.
 - busConfig
-    - `MOSI`_io_num: The GPIO pin that connects the `MOSI` pin.
-    - `MISO`_io_num: The GPIO pin that connects the `MISO` pin.
+    - MOSI_io_num: The GPIO pin that connects the `MOSI` pin.
+    - MISO_io_num: The GPIO pin that connects the `MISO` pin.
     - sclk_io_num: The GPIO pin that connects the SCLK pin.
     - quadwp & quadhd: Set to -1 indicating we are not using these.
 - SPI_DMA_DISABLED
