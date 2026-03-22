@@ -173,7 +173,7 @@ extern "C" void app_main(void) {
     - queue_size: Set to 1 as our program is only using synchronous methods (such as `spi_device_polling_transmit()`).
     - mode: [The SPI mode](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html) is determined by a combination of the Clock Polarity (CPOL) and the Clock Phase (CPHA). From the diagram (figure 15 in the CC1101 datasheet), we can see the SCLK line starts and idles low. So the CPOL is zero. We can also see that the lines indicate data is sampled on the rising edge of the SCLK signal, meaning the CPHA is zero. A combination of CPOL = 0 and CPHA = 0 means the SPI mode is 0. ![CC1101 Pinout](assets/timing_transfer.png)
 - cc1101
-    - An arbitrary name that should correspond to the device you are using. We will referencfe this in our transactions. 
+    - An arbitrary name that should correspond to the device you are using. We will reference this in our transactions. 
 
 # 5. Register Access in the CC1101
 
