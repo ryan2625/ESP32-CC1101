@@ -6,7 +6,7 @@
 
 ## Introduction
 
-This project demonstrates how to interface a CC1101 RF transceiver with an ESP32 using the ESP-IDF framework. In this demo, we will be accessing a status [register](https://en.wikipedia.org/wiki/Hardware_register#:~:text=In%20digital%20electronics%2C%20a%20register,upon%20loss%20of%20operating%20power.) inside the CC1101 (and performing a few other operations). A successful read of this register will confirm we have set up our devices to communicate successfully. The relevant code can be found in `main/main.cpp`. 
+This project demonstrates how to interface a CC1101 RF transceiver with an ESP32 using the ESP-IDF framework. In this demo, we will be accessing a [register](https://en.wikipedia.org/wiki/Hardware_register#:~:text=In%20digital%20electronics%2C%20a%20register,upon%20loss%20of%20operating%20power.) inside the CC1101 (and performing a few other operations). A successful read of this register will confirm we have set up our devices to communicate successfully. The relevant code can be found in `main/main.cpp`. 
 > Note: We use ESP-IDF here for full control and learning purposes, but Arduino can be a simpler option for long-term development.
 
 Writing this firmware can be accomplished in five steps:
