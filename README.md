@@ -118,7 +118,7 @@ extern "C" void app_main(void) {
 
 ### Determining spi_bus_initialize parameters
 - SPI3_HOST
-    - The SPI peripheral you are selecting. There are four SPI peripherals on the classic ESP32. Two are tied to internal ESP32 operations, while `SPI2_HOST` and `SPI3_HOST` are available for public interfacing.
+    - The SPI controller you are selecting. There are four SPI controllers on the classic ESP32. Two are tied to internal ESP32 operations, while `SPI2_HOST` and `SPI3_HOST` are available for public interfacing.
 - busConfig
     - MOSI_io_num: The GPIO pin that connects the `MOSI` pin.
     - MISO_io_num: The GPIO pin that connects the `MISO` pin.
