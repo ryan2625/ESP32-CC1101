@@ -187,24 +187,31 @@ The CC1101 exposes three main SPI accessible types: configuration [registers](ht
 - Command strobes are not registers, but actually single byte instructions that immediately trigger actions inside the radio such as system reset (`SRES`), enter receiver mode (`SRX`), or enter transmit mode (`STX`).
 
 ### Expected Transaction Format
-The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the `MISO` and `MOSI` lines every clock pulse. Basically, every SPI transaction starts with a header byte that follows this format: 
+The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the `MISO` and `MOSI` lines every clock pulse. Basically, every SPI transaction starts with a header byte that follows this format:
 
+<div align='center'>
+   
 | Bit Position | Field Name | Width | Description | Values |
 |--------------|------------|--------|------------|--------|
 | 7 | R/W | 1 bit | Determines if operation is read or write | `0` = Write<br>`1` = Read |
 | 6 | Burst | 1 bit | Determines single or multi-byte access | `0` = Single access<br>`1` = Burst access |
 | 5–0 | Address | 6 bits | Register address or command strobe | `0x00 – 0x3F` |
+</div>
 
 - Bit position 7 tells the CC1101 if we are reading an address or writing to an address.
 - Bit position 6 specifies if we are using single or multi-byte access. 
 - Bit position 5-0 is the address that we want to interact with.
+<a id="differentiate"></a>
+One important thing to know is that there is a special interaction between status registers and command strobes: they can share the same address. The way we differentiate between them at the same address is with the burst and R/W bits.
 
-One important thing to know is that there is a special interaction between status registers and command strobes: they can share the same address. For example, the address `0x30` contains the command strobe `SRES` and the `PARTNUM` status register. The difference is that when we construct our header byte, we must set the burst and R/W bits to `1` if we want to access the status register at this address. Setting these two bits to `1` will turn the byte we send from `0x30` to `0xF0`. If we leave the burst and R/W bits as `0`, our byte will remain as `0x30` corresponding to the `SRES` strobe. 
+For example, the address `0x30` contains the command strobe `SRES` and the `PARTNUM` status register. The difference is that when we construct our header byte, we must set the burst and R/W bits to `1` if we want to access the status register at this address and leave them as `0` if we want to send a command strobe. The table below shows how we form the different bytes for each case:
+<div align='center'>
 
 | Name     | Address (Hex) | Header Byte (Hex) | Address (Binary) | Header Byte (Binary)   |
 |----------|---------------|-------------------|------------------|------------------------|
 | `SRES`   | `0x30`        | `0x30`            | `0011 0000`      | `0011 0000`            |
 | `PARTNUM`| `0x30`        | `0xF0`            | `0011 0000`      | `1111 0000`            |
+</div>
 
 Below are some relevant addresses with different command strobes (Table 42) and status register values (Table 44). Note that the parenthesis in table 44 contain the header byte you would send to access the registers.
 
@@ -218,7 +225,7 @@ Below are some relevant addresses with different command strobes (Table 42) and 
 </div>
 
 > [!IMPORTANT]
-> During every SPI transaction, the first thing the CC1101 will always respond with is a Chip Status Byte. One important detail is that the number of bytes sent in a transaction is always equal to the number of bytes received. This is due to the nature of the SPI protocol; it is a full duplex, so the slave can only send bits while the master clocks it. 
+> Similar to how the first thing we send is a header byte during an SPI transaction, the first thing the CC1101 will always respond with is a Chip Status Byte. One important detail is that the number of bytes sent in a transaction is always equal to the number of bytes received. This is due to the nature of the SPI protocol; it is a full duplex, so the slave can only send bits while the master clocks it. 
 > For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the [SPI protocol](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html) is recommended if a full-duplex SPI is unfamiliar.
 > 
 >  Example: To read the value in the `PARTNUM` register, we would send `1` (read) `1` (burst bit for overloaded register) `110000` (the address where this register is located). `1111 0000` = `0xF0`. Since data can only be received while the master is transmitting, we must send two bytes: `0xF0` `0x00`. In return, we receive two bytes corresponding to the Chip Status Byte and the actual register value. Sending only the byte `0xF0` would give us the chip status byte, but not the actual register value. `0x00` functions as a dummy byte meant to give time (clock cycles) for the slave to send back the requested data.
