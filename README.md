@@ -184,7 +184,7 @@ The CC1101 exposes three main SPI accessible types: configuration [registers](ht
 
 - Status registers are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status.
 
-- Command strobes are not registers, but actually single-byte instructions that immediately trigger actions inside the radio such as system reset (`SRES`), enter receiver mode (`SRX`), or enter transmit mode (`STX`).
+- Command strobes are not registers, but actually single byte instructions that immediately trigger actions inside the radio such as system reset (`SRES`), enter receiver mode (`SRX`), or enter transmit mode (`STX`).
 
 ### Expected Transaction Format
 The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the `MISO` and `MOSI` lines every clock pulse. It starts every transaction with a header byte that follows this format: 
@@ -254,8 +254,8 @@ extern "C" void app_main(void) {
 - cc1101
     - The device name we created earlier in our process.
 - version_register
-    - tx_v: The Bytes we want to send to the CC1101. our first byte is `0xF1`. This corresponds to the `VERSION` register in the CC1101 (see Table 44 above or in the datasheet). The second byte is a dummy byte used to clock out the register value from the slave. This needs to be included, as every status register read will return two bytes: a chip status byte and the register value byte. In order to receive 2 bytes, we must send 2 bytes as well (due to the nature of the SPI protocol being a full-duplex).
-    - rx_v: This buffer will be filled with the response of the slave. Again, we include two bytes in the buffer because that is what we expect to receive when we send two bytes.
+    - tx_v: The Bytes we want to send to the CC1101. tx_v[0] will always be our header byte, which is `0xF1`. This corresponds to the `VERSION` register in the CC1101 (see Table 44 above or in the datasheet). The second byte is a dummy byte used to clock out the register value from the slave. This needs to be included, as every status register read will return two bytes: a chip status byte and the register value byte. In order to receive 2 bytes, we must send 2 bytes as well (due to the nature of the SPI protocol being a full-duplex).
+    - rx_v: This buffer will be filled with the response of the slave. Again, we include two bytes in the buffer because that is what we expect to receive when we send two bytes. rx_v[0] will always be the chip status byte when the CC1101 fills the buffer.
     - length: We are sending two bytes, so that equals 16 bits.
 
 After calling this method, simply logging out the version_register receive buffer will show us the value contained inside the `VERSION` register. As stated before, the first byte is a chip status byte. So we will receive a chip status byte located in rx_v[0] and the actual register value in rx_v[1]. The expected value in the `VERSION` register will be `0x14`. 
