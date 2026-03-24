@@ -178,15 +178,13 @@ extern "C" void app_main(void) {
 # 5. Register Access in the CC1101
 
 ### SPI accessible types
-The CC1101 exposes three main SPI-accessible types: configuration [registers](https://en.wikipedia.org/wiki/Hardware_register), status registers, and command strobes. 
+The CC1101 exposes three main SPI accessible types: configuration [registers](https://en.wikipedia.org/wiki/Hardware_register), status registers, and command strobes. 
 
-- Configuration registers (`0x00–0x2E`) are read/write and control radio parameters like frequency, modulation, and packet behavior. 
+- Configuration registers are read/write and control radio parameters like frequency, modulation, and packet behavior. 
 
-- Status registers (`0x30–0x3D` when accessed with Burst=`1`) are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status. 
+- Status registers are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status.
 
-- Command strobes (`0x30–0x3D` when accessed with Burst=`0`) are not registers, but actually single-byte instructions that immediately trigger actions inside the radio such as system reset (`SRES`), enter receiver mode (`SRX`), or enter transmit mode (`STX`).
-
-See the datasheet sections on FIFO and burst transfers to know more about multi-byte transactions where the burst bit = `1`.
+- Command strobes are not registers, but actually single-byte instructions that immediately trigger actions inside the radio such as system reset (`SRES`), enter receiver mode (`SRX`), or enter transmit mode (`STX`).
 
 ### Expected Transaction Format
 The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the `MISO` and `MOSI` lines every clock pulse. It starts every transaction with a header byte that follows this format: 
@@ -198,9 +196,17 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
 | 5–0 | Address | 6 bits | Register address or command strobe | `0x00 – 0x3F` |
 
 - Bit position 7 tells the CC1101 if we are reading an address or writing to an address.
-- Bit position 6 specifies if we are using single or multi-byte access. There is also a special use case for this bit: if a register is overloaded (where the same address is used for multiple purposes), this specifies if we want to access the value at a status register by setting the bit to `1` or if we want to send a command strobe by setting this bit to `0`. 
-    - For example, address `0x30` contains both the command strobe `SRES` and the `PARTNUM` register. If we just send the byte `0x30`, we would send the `SRES` strobe. If we send the byte `0xF0` (which is `0x30` with a burst bit set to `1` at bit 6), we would receive back the `PARTNUM` value. 
-- Bit position 5-0 is the address that we want to interact with. Below are some relevant addresses with different command strobes (Table 42) and status register values (Table 44). 
+- Bit position 6 specifies if we are using single or multi-byte access. 
+- Bit position 5-0 is the address that we want to interact with.
+
+One important thing to know is that there is a special interaction between status registers and command strobes: they can share the same address. For example, the address `0x30` contains the command strobe `SRES` and the `PARTNUM` status register. The difference is that when we construct our header byte, we must set the burst and R/W bits to `1` if we want to access the status register at this address. Setting these two bits to `1` will turn the byte we send from `0x30` to `0xF0`. If we leave the burst and R/W bits as `0`, our byte will remain as `0x30` corresponding to the `SRES` strobe. 
+
+| Name     | Address (Hex) | Header Byte (Hex) | Address (Binary) | Header Byte (Binary)   |
+|----------|---------------|-------------------|------------------|------------------------|
+| `SRES`   | `0x30`        | `0x30`            | `0011 0000`      | `0011 0000`            |
+| `PARTNUM`| `0x30`        | `0xF0`            | `0011 0000`      | `1111 0000`            |
+
+Below are some relevant addresses with different command strobes (Table 42) and status register values (Table 44). Note that the parenthesis in table 44 contain the header byte you would send to access the registers.
 
 <div align="center">
 <strong>Table 42: Command Strobes</strong><br>
