@@ -201,7 +201,9 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
 - Bit position 7 tells the CC1101 if we are reading an address or writing to an address.
 - Bit position 6 specifies if we are using single or multi-byte access. 
 - Bit position 5-0 is the address that we want to interact with.
+  
 <a id="differentiate"></a>
+
 One important thing to know is that there is a special interaction between status registers and command strobes: they can share the same address. The way we differentiate between them at the same address is with the burst and R/W bits.
 
 For example, the address `0x30` contains the command strobe `SRES` and the `PARTNUM` status register. The difference is that when we construct our header byte, we must set the burst and R/W bits to `1` if we want to access the status register at this address and leave them as `0` if we want to send a command strobe. The table below shows how we form the different bytes for each case:
