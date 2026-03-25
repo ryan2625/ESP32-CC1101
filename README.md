@@ -214,7 +214,7 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
 - Bit position 5-0 is the address that we want to interact with.
   
 <a id="differentiate"></a>
-
+#### Address Overloading
 One important thing to know is that there is a special interaction between status registers and command strobes: they can share the same address. This is known as 'overloading' a register. The way we differentiate between them at the same address is with the burst and R/W bits.
 
 For example, the address `0x30` contains the command strobe `SRES` AND the `PARTNUM` status register. The difference is that when we construct our header byte, we must set the burst and R/W bits to `1` if we want to access the status register at this address and leave them as `0` if we want to send a command strobe. The table below shows how we form the different bytes for each case:
