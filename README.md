@@ -12,7 +12,7 @@ This project demonstrates how to write basic firmware for the CC1101 RF transcei
 Writing this firmware can be accomplished in five steps:
 - Acquiring prerequisites (hardware, software)
 - Wiring the appropriate pins from the CC1101 to the ESP32
-- Initialize an SPI bus using ESP-IDF  
+- Initializing an SPI bus on the ESP32 
 - Add the CC1101 as a device on that bus
 - Transmit and receive data between the devices
 
