@@ -96,7 +96,7 @@ The protocol the CC1101 uses to physically communicate with other devices is cal
 | `SCK`  | Serial Clock             | Synchronizes data transfer          |
 | `CSn`  | Chip Select              | Selects the CC1101 for communication|
  
-An important concept in the SPI protocol is known as the SPI bus, where the SPI bus is essentially a group of shared wires that transfer data. These wires map to the four pins of the SPI protocol including: the `MOSI` (Master Out, Slave In), `MISO` (Master In, Slave Out), `SCK` (Clock Signal), and `CSn` (Chip Select) pins. `spi_bus_initialize` tells the ESP32 to configure the SPI bus according to our specifications including which SPI controller to select and which pins we are using for this bus. We initialize the SPI bus using:
+An important concept in the SPI protocol is known as the SPI bus, where the SPI bus is essentially a group of shared wires that transfer data. These wires map to the four pins of the SPI protocol including: the `MOSI`, `MISO`, `SCK`, and `CSn` pins. `spi_bus_initialize` tells the ESP32 to configure the SPI bus according to our specifications including which SPI controller to select and which pins we are using for this bus. We initialize the SPI bus using:
 
 - [`spi_bus_initialize()`](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html#_CPPv418spi_bus_initialize17spi_host_device_tPK16spi_bus_config_t14spi_dma_chan_t)
 
