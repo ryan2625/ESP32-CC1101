@@ -34,6 +34,7 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
 5. [Register Access in the CC1101](#5-register-access-in-the-cc1101)
     - [SPI Accessible Types](#spi-accessible-types)
    - [Expected Transaction Format](#expected-transaction-format)
+   - [Chip Status Byte](#chip-status-byte)
 6. [Interact with the Device](#6-interact-with-the-device)
    - [Method: `spi_device_polling_transmit()`](#method-spi_device_polling_transmit)
    - [Determining Values](#determining-spi_device_polling_transmit-parameters)
