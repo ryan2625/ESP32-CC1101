@@ -87,7 +87,7 @@ Once everything is wired up and the prerequisites are complete, we can begin wri
 # 3. Initialize an SPI Bus
 
 ### Method: `spi_bus_initialize()`
-The protocol the CC1101 uses to communicate with other devices is called SPI, or Serial Peripheral Interface. It is one of three main protocols that embedded devices use to transmit data; the other two are known as I2C and UART. The purpose of each wire in the SPI protocol is shown below.
+The protocol the CC1101 uses to physically communicate with other devices is called SPI, or Serial Peripheral Interface. It is one of three main protocols that embedded devices use to transmit data; the other two are known as I2C and UART. The purpose of each wire in the SPI protocol is shown below.
 
 | Pin    | Full Name                | Purpose                             |
 |--------|--------------------------|-------------------------------------|
