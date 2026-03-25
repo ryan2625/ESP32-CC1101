@@ -190,7 +190,7 @@ The CC1101 exposes three main SPI accessible types: configuration [registers](ht
 - Command strobes are not registers, but actually single byte instructions that immediately trigger actions inside the radio such as system reset (`SRES`), enter receiver mode (`SRX`), or enter transmit mode (`STX`).
 
 ### Expected Transaction Format
-The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the `MISO` and `MOSI` lines every clock pulse. Basically, every SPI transaction starts with a header byte that follows this format:
+The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It shifts a single bit in and out of the `MISO` and `MOSI` lines every clock pulse. The important takeaway is that every SPI transaction starts with a header byte that follows this format:
 
 <div align='center'>
    
@@ -202,7 +202,7 @@ The CC1101 does not have separate phases for sending bytes (no separate command 
 </div>
 
 - Bit position 7 tells the CC1101 if we are reading an address or writing to an address.
-- Bit position 6 specifies if we are using single or multi-byte access. 
+- Bit position 6 specifies if we are using single or multi-byte access. We will not be implementing multi-byte access in this guide.
 - Bit position 5-0 is the address that we want to interact with.
   
 <a id="differentiate"></a>
