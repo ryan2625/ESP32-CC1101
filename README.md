@@ -142,7 +142,7 @@ extern "C" void app_main(void) {
 
 ### Method: `spi_bus_add_device()`
 
-An SPI bus can have multiple devices using it. All devices would share the `MOSI`, `MISO`, and `SCK` lines. Each device would have its own `CSn` line that determines which device the master (ESP32) would listen to. This method will let the ESP32 know how to interact with our CC1101 by specifying which host it belongs to, what clock speed to use, etc. We add the CC1101 using:
+An SPI bus can have multiple devices using it. All devices would share the `MOSI`, `MISO`, and `SCK` lines, but each device would have its own `CSn` line that determines which device the master (ESP32) would listen to. This method will let the ESP32 know how to interact with our CC1101 by specifying which host it belongs to, what clock speed to use, etc. We add the CC1101 using:
 
 - [`spi_bus_add_device()`](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html#_CPPv418spi_bus_add_device17spi_host_device_tPK29spi_device_interface_config_tP19spi_device_handle_t)
 
