@@ -237,8 +237,21 @@ Below are some relevant addresses with different command strobes (Table 42) and 
 
 </div>
 
+### Chip Status Byte
+
+The first thing returned by the CC1101 is a chip status byte. This byte provides a quick snapshot of the radio’s internal state, including:
+
+- The current state machine status (e.g., IDLE, RX, TX)
+- Whether the TX FIFO or RX FIFO has available space or data
+  
+<div align="center">
+<img src="assets/chip_status_byte.png" width="70%"/> 
+</div>
+
+Rather than returning register data immediately, the CC1101 always sends this status byte first. The actual requested data (if any) is returned on subsequent bytes in the transaction.
+
 > [!IMPORTANT]
-> Similar to how the first thing we send is a header byte during an SPI transaction, the first thing the CC1101 will always respond with is a Chip Status Byte. One important detail is that the number of bytes sent in a transaction is always equal to the number of bytes received. This is due to the nature of the SPI protocol; it is a full duplex, so the slave can only send bits while the master clocks it. 
+> One important detail is that the number of bytes sent in a transaction is always equal to the number of bytes received. This is due to the nature of the SPI protocol; it is a full duplex, so the slave can only send bits while the master clocks it. 
 > For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the [SPI protocol](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html) is recommended if a full-duplex SPI is unfamiliar.
 > 
 >  Example: To read the value in the `PARTNUM` register, we would send `1` (read) `1` (burst bit for overloaded register) `110000` (the address where this register is located). `1111 0000` = `0xF0`. Since data can only be received while the master is transmitting, we must send two bytes: `0xF0` `0x00`. In return, we receive two bytes corresponding to the Chip Status Byte and the actual register value.
