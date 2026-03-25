@@ -48,6 +48,8 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
 - ESP32: The ESP32 is a microcontroller with integrated Wi-Fi and Bluetooth, manufactured by Espressif Systems. It is widely used in IoT (Internet of Things) projects due to its powerful 32-bit dual-core processor, high performance, and versatility in smart home and wearable devices.
 
 - Breadboard wires: Breadboard wires (or jumper wires) are flexible or solid core wires with pins on the ends used to create temporary, solderless connections on a breadboard for prototyping circuits.
+
+The hardware is available for purchase on many online platforms such as AliExpress and Amazon.
 ## Software
 
 - [Visual Studio Code](https://code.visualstudio.com/): A lightweight, extensible source code editor used to write and manage ESP32 projects.
@@ -85,7 +87,8 @@ Once everything is wired up and the prerequisites are complete, we can begin wri
 # 3. Initialize an SPI Bus
 
 ### Method: `spi_bus_initialize()`
-
+The protocol the CC1101 uses to communicate with other devices is called SPI, or Serial Peripheral Interface. It is one of three main protocols that embedded devices use to transmit data; the other two are known as I2C and UART.
+ 
 An SPI bus is essentially a group of shared wires that transfer data. In our case, the wires map to the four pins of the SPI protocol. This includes the `MOSI` (Master Out, Slave In), `MISO` (Master In, Slave Out), `SCK` (Clock Signal), and `CSn` (Chip Select) lines. `spi_bus_initialize` tells the ESP32 to configure the SPI bus according to our specifications including which SPI controller to select and which pins we are using for this bus. We initialize the SPI bus using:
 
 - [`spi_bus_initialize()`](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html#_CPPv418spi_bus_initialize17spi_host_device_tPK16spi_bus_config_t14spi_dma_chan_t)
