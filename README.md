@@ -6,7 +6,7 @@
 
 ## Introduction
 
-This project demonstrates how to interface a CC1101 RF transceiver with an ESP32 using the ESP-IDF framework. In this demo, we will be accessing a [register](https://en.wikipedia.org/wiki/Hardware_register#:~:text=In%20digital%20electronics%2C%20a%20register,upon%20loss%20of%20operating%20power.) inside the CC1101 (and performing a few other operations). A successful read of this register will confirm we have set up our devices to communicate successfully. The relevant code can be found in `main/main.cpp`. 
+This project demonstrates how to write basic firmware for the CC1101 RF transceiver with the ESP32 using the ESP-IDF framework. In this demo, we will be accessing a [register](https://en.wikipedia.org/wiki/Hardware_register#:~:text=In%20digital%20electronics%2C%20a%20register,upon%20loss%20of%20operating%20power.) inside the CC1101 (and performing a few other operations). A successful read of this register will confirm we have set up our devices to communicate successfully. The relevant code can be found in `main/main.cpp`. 
 > Note: We use ESP-IDF here for full control and learning purposes, but Arduino can be a simpler option for long-term development.
 
 Writing this firmware can be accomplished in five steps:
@@ -28,7 +28,7 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
 3. [Initialize an SPI Bus](#3-initialize-an-spi-bus)
    - [Method: `spi_bus_initialize()`](#method-spi_bus_initialize)
    - [Determining Values](#determining-spi_bus_initialize-parameters)
-4. [Register a Device](#4-register-a-device)
+4. [Add a Device](#4-add-a-device)
    - [Method: `spi_bus_add_device()`](#method-spi_bus_add_device)
    - [Determining Values](#determining-spi_bus_add_device-parameters)
 5. [Register Access in the CC1101](#5-register-access-in-the-cc1101)
@@ -138,11 +138,11 @@ extern "C" void app_main(void) {
     - Controls whether the SPI driver uses Direct Memory Access for transfers. DMA can be disabled for small and simple transfers. 
 > Note: If we were to set SPI_DMA_CH_AUTO, we would have to change how we manage memory such as using `uint8_t* tx = (uint8_t*) heap_caps_malloc(64, MALLOC_CAP_DMA);`. Optional further reading on DMA is recommended.
 
-# 4. Register a Device 
+# 4. Add a Device 
 
 ### Method: `spi_bus_add_device()`
 
-An SPI bus can have multiple devices using it. All devices would share the `MOSI`, `MISO`, and `SCK` lines. Each device would have its own `CSn` line that determines which device the master (ESP32) would listen to. This method will let the ESP32 know how to interact with our CC1101 by specifying which host it belongs to, what clock speed to use, etc. We register the CC1101 using:
+An SPI bus can have multiple devices using it. All devices would share the `MOSI`, `MISO`, and `SCK` lines. Each device would have its own `CSn` line that determines which device the master (ESP32) would listen to. This method will let the ESP32 know how to interact with our CC1101 by specifying which host it belongs to, what clock speed to use, etc. We add the CC1101 using:
 
 - [`spi_bus_add_device()`](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html#_CPPv418spi_bus_add_device17spi_host_device_tPK29spi_device_interface_config_tP19spi_device_handle_t)
 
