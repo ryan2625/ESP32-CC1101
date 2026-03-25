@@ -239,14 +239,11 @@ Below are some relevant addresses with different command strobes (Table 42) and 
 
 ### Chip Status Byte
 
-The first thing returned by the CC1101 is a chip status byte. This byte provides a quick snapshot of the radio’s internal state, including:
+The first thing returned by the CC1101 is a chip status byte. We can ignore most fields in this byte for now, but just take note of how this byte fits into an SPI transaction. This byte provides a quick summary of the radio’s internal state, including:
 
-- The current state machine status (e.g., IDLE, RX, TX)
+- If the device is ready to be interacted with
+- The current state machine status
 - Whether the TX FIFO or RX FIFO has available space or data
-  
-<div align="center">
-<img src="assets/chip_status_byte.png" width="70%"/> 
-</div>
 
 Rather than returning register data immediately, the CC1101 always sends this status byte first. The actual requested data (if any) is returned on subsequent bytes in the transaction.
 
