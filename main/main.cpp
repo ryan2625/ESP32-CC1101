@@ -21,7 +21,7 @@ extern "C" {
 
 // Below are the transaction byte values we must send for each register.
 // Note: For command strobes, the byte we send is the exact same as the address the strobe is located at.
-// For status registers, the byte is the address with a `1` at bit 7. See the Expected Transaction Format section.
+// For status registers, the byte is the address with a `1` at bits 6 and 7. See the Expected Transaction Format section.
 constexpr uint8_t CC1101_STROBE_SRES = 0x30; 
 constexpr uint8_t CC1101_STROBE_SIDLE = 0x36;
 constexpr uint8_t CC1101_STROBE_SFTX = 0x3B;
