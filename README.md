@@ -13,7 +13,7 @@ Writing this firmware can be accomplished in five steps:
 - Acquiring prerequisites (hardware, software)
 - Wiring the appropriate pins from the CC1101 to the ESP32
 - Initialize an SPI bus using ESP-IDF  
-- Register the CC1101 as a device on that bus
+- Add the CC1101 as a device on that bus
 - Transmit and receive data between the devices
 
 This README will reference the [ESP32 documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html) and the official [TI CC1101 transceiver datasheet](https://www.ti.com/lit/ds/symlink/cc1101.pdf). Basic programming experience, familiarity with the [SPI interface](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html), and development board knowledge (Raspberry Pi, Arduino, ESP32) will be helpful to follow along.
