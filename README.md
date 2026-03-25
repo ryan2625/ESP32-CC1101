@@ -248,8 +248,8 @@ The first thing returned by the CC1101 is a chip status byte. We can ignore most
 Rather than returning register data immediately, the CC1101 always sends this status byte first. The actual requested data (if any) is returned on subsequent bytes in the transaction.
 
 > [!IMPORTANT]
-> One important detail is that the number of bytes sent in a transaction is always equal to the number of bytes received. This is due to the nature of the SPI protocol; it is a full duplex, so the slave can only send bits while the master clocks it. 
-> For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the [SPI protocol](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html) is recommended if a full-duplex SPI is unfamiliar.
+> The number of bytes sent in a transaction is always equal to the number of bytes received. This is due to the nature of the SPI protocol; it is a full duplex, so the slave can only send bits while the master clocks it. 
+> For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the [SPI protocol](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html) is recommended if a full-duplex is unfamiliar.
 > 
 >  Example: To read the value in the `PARTNUM` register, we would send `1` (read) `1` (burst bit for overloaded register) `110000` (the address where this register is located). `1111 0000` = `0xF0`. Since data can only be received while the master is transmitting, we must send two bytes: `0xF0` `0x00`. In return, we receive two bytes corresponding to the Chip Status Byte and the actual register value.
 >
