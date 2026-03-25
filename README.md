@@ -87,7 +87,14 @@ Once everything is wired up and the prerequisites are complete, we can begin wri
 # 3. Initialize an SPI Bus
 
 ### Method: `spi_bus_initialize()`
-The protocol the CC1101 uses to communicate with other devices is called SPI, or Serial Peripheral Interface. It is one of three main protocols that embedded devices use to transmit data; the other two are known as I2C and UART.
+The protocol the CC1101 uses to communicate with other devices is called SPI, or Serial Peripheral Interface. It is one of three main protocols that embedded devices use to transmit data; the other two are known as I2C and UART. The purpose of each wire in the SPI protocol is shown below.
+
+| Pin    | Full Name                | Purpose                             |
+|--------|--------------------------|-------------------------------------|
+| `MOSI` | Master Out, Slave In     | Sends data to the CC1101            |
+| `MISO` | Master In, Slave Out     | Receives data from the CC1101       |
+| `SCK`  | Serial Clock             | Synchronizes data transfer          |
+| `CSn`  | Chip Select (active low) | Selects the CC1101 for communication|
  
 An important concept in the SPI protocol is known as the SPI bus, where the SPI bus is essentially a group of shared wires that transfer data. These wires map to the four pins of the SPI protocol including: the `MOSI` (Master Out, Slave In), `MISO` (Master In, Slave Out), `SCK` (Clock Signal), and `CSn` (Chip Select) pins. `spi_bus_initialize` tells the ESP32 to configure the SPI bus according to our specifications including which SPI controller to select and which pins we are using for this bus. We initialize the SPI bus using:
 
