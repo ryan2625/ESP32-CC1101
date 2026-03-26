@@ -69,7 +69,7 @@ This hardware is available for purchase on many online platforms such as AliExpr
 
 > Note: The pinout can change based on the type of ESP32 and CC1101 module you own. Verify your board's pinout before wiring.
 
-### Required SPI Connections
+### Required Pin Connections
 
 | CC1101 Pin | ESP32 Pin |
 |------------|-----------|
