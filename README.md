@@ -240,7 +240,7 @@ The first thing returned by the CC1101 is the chip status byte that provides a s
 > 
 >  Example: To read the value in the `PARTNUM` register, we would send the value `1111 0000` (`0xF0`). The first two bits are the R/W and burst bits set to `1`, while the last 6 are the address where `PARTNUM` lives at (`11 0000`).
 > 
->  Since data can only be received while the master is transmitting, we must send two bytes: `0xF0` `0x00`. In return, we receive two bytes corresponding to the Chip Status Byte and the actual register value. Sending only the byte `0xF0` would return the chip status byte, but not the actual register value. `0x00` functions as a dummy byte meant to give time (clock cycles) for the slave to send back the requested data.
+>  Since data can only be received while the master is transmitting, we must send two bytes: `0xF0` `0x00`. In return, we receive two bytes corresponding to the chip status byte and the actual register value. Sending only the byte `0xF0` would return the chip status byte, but not the actual register value. `0x00` functions as a dummy byte meant to give time (clock cycles) for the slave to send back the requested data.
 # 6. Interact with the Device
 
 ### Method: `spi_device_polling_transmit()`
