@@ -125,7 +125,6 @@ extern "C" void app_main(void) {
     ...
 }
 ```
-> Note: We can wrap our spi functions with an error handler to ensure errors propagate correctly and get logged to the console such as: `ESP_ERROR_CHECK(spi_bus_initialize(SPI3_HOST, &busConfig, SPI_DMA_DISABLED));`.
 
 ### Determining spi_bus_initialize parameters
 - SPI3_HOST
@@ -137,7 +136,6 @@ extern "C" void app_main(void) {
     - quadwp & quadhd: Set to -1 indicating we are not using these.
 - SPI_DMA_DISABLED
     - Controls whether the SPI driver uses Direct Memory Access for transfers. DMA can be disabled for small and simple transfers. 
-> Note: If we were to set SPI_DMA_CH_AUTO, we would have to change how we manage memory such as using `uint8_t* tx = (uint8_t*) heap_caps_malloc(64, MALLOC_CAP_DMA);`. Optional further reading on DMA is recommended.
 
 # 4. Add a Device 
 
