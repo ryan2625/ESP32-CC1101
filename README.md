@@ -108,12 +108,6 @@ This function requires:
 - [`spi_dma_chan_t`](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html#_CPPv414spi_dma_chan_t)
 
 ```cpp
-#include <iostream>
-#include "esp_log.h"
-#include "driver/spi_master.h"
-#include "freertos/FreeRTOS.h"
-
-
 extern "C" void app_main(void) {
     spi_bus_config_t busConfig = {};
     busConfig.MOSI_io_num = GPIO_NUM_23;
