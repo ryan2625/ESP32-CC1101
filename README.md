@@ -289,7 +289,7 @@ After calling this method, simply logging out the version_register receive buffe
 ### CC1101 Initialization Procedure
 Section 19.1 of the datasheet specifies the required sequence for powering up the CC1101. The system must be reset every time you turn on the power supply.
 
-The government-approved method of accomplishing this is as follows:
+The government approved method of accomplishing this is as follows:
 - Pull `CSn` LOW, then drive it HIGH again
 - Wait for `MISO` to go LOW
 - Send `SRES`
