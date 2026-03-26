@@ -39,6 +39,8 @@ This README will reference the [ESP32 documentation](https://docs.espressif.com/
    - [Method: `spi_device_polling_transmit()`](#method-spi_device_polling_transmit)
    - [Determining Values](#determining-spi_device_polling_transmit-parameters)
    - [CC1101 Initialization Procedure](#cc1101-initialization-procedure)
+7. [Further Reading](#7-further-reading)
+
 
 # 1. Prerequisites
 
@@ -185,7 +187,7 @@ The CC1101 has three main types of addresses: configuration [registers](https://
 
 - Configuration registers are read/write and control radio parameters like frequency, modulation, and packet behavior. 
 
-- Status registers are read-only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status.
+- Status registers are read only and report internal state information such as `PARTNUM`, `VERSION`, `RSSI`, and `FIFO` status.
 
 - Command strobes are single byte instructions that immediately trigger actions inside the radio such as system reset (`SRES`), enter receiver mode (`SRX`), or enter transmit mode (`STX`).
 
@@ -238,7 +240,7 @@ The first thing returned by the CC1101 is the chip status byte that provides a s
 > 
 >  Example: To read the value in the `PARTNUM` register, we would send the value `1111 0000` (`0xF0`). The first two bits are the R/W and burst bits set to `1`, while the last 6 are the address where `PARTNUM` lives at (`11 0000`).
 > 
->  Since data can only be received while the master is transmitting, we must send two bytes: `0xF0` `0x00`. In return, we receive two bytes corresponding to the Chip Status Byte and the actual register value. Sending only the byte `0xF0` would give us the chip status byte, but not the actual register value. `0x00` functions as a dummy byte meant to give time (clock cycles) for the slave to send back the requested data.
+>  Since data can only be received while the master is transmitting, we must send two bytes: `0xF0` `0x00`. In return, we receive two bytes corresponding to the Chip Status Byte and the actual register value. Sending only the byte `0xF0` would return the chip status byte, but not the actual register value. `0x00` functions as a dummy byte meant to give time (clock cycles) for the slave to send back the requested data.
 # 6. Interact with the Device
 
 ### Method: `spi_device_polling_transmit()`
@@ -289,16 +291,8 @@ This would require you to set spics_io_num to -1 when adding a device to the bus
 
 Alternatively, you can send the command strobes `SRES`, `SIDLE`, and `SFTX` in that order. After this sequence, your device should be ready to use. See `strobe_reset` in `main.cpp`.
 
-<!--
-7. [Further Reading](#7-further-reading)
-
 # 7. Further Reading
-The [next guide in this series](https://github.com/ryan2625/CC1101-TX?tab=readme-ov-file#introduction) focuses on transmitting a signal with the ESP-IDF and the CC1101 and interpreting datasheets. It is noticeably more complex, but a great way to gain a deeper understanding about interacting with embedded devices!
--->
-
-
-
-
+The [next guide in this series](https://github.com/ryan2625/ESP32-CC1101-Transmission?tab=readme-ov-file#introduction) focuses on transmitting a signal with the CC1101 and interpreting datasheets. It is noticeably more complex, but a great way to gain a deeper understanding about interacting with embedded devices!
 
 
 
