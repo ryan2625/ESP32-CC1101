@@ -231,13 +231,7 @@ Below are some relevant addresses with different command strobes (Table 42) and 
 
 ### Chip Status Byte
 
-The first thing returned by the CC1101 is a chip status byte. We can ignore most fields in this byte for now, but just take note of how this byte fits into an SPI transaction. This byte provides a quick summary of the radio’s internal state, including:
-
-- If the device is ready to be interacted with
-- The current state machine status
-- Whether the TX FIFO or RX FIFO has available space or data
-
-Rather than returning register data immediately, the CC1101 always sends this status byte first. The actual requested data (if any) is returned on subsequent bytes in the transaction.
+The first thing returned by the CC1101 is the chip status byte that provides a summary regarding the internal state of the device. We can ignore the specifics of this byte for now, but just take note of how this byte fits into an SPI transaction. In a transaction, the actual requested data (if any) is always returned **after** the chip status byte.
 
 > [!IMPORTANT]
 > The number of bytes sent in a transaction is always equal to the number of bytes received. This is due to the nature of the SPI protocol; it is a full duplex, so the slave and the master can only transmit data at the same time. They cannot transfer data independently of each other. Further reading about the [SPI protocol](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html) is recommended if a full-duplex is unfamiliar.
