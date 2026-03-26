@@ -243,7 +243,9 @@ Rather than returning register data immediately, the CC1101 always sends this st
 > The number of bytes sent in a transaction is always equal to the number of bytes received. This is due to the nature of the SPI protocol; it is a full duplex, so the slave can only send bits while the master clocks it. 
 > For more information, see sections 10.1 and 10.2 on the CC1101 datasheet. Further reading about the [SPI protocol](https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html) is recommended if a full-duplex is unfamiliar.
 > 
->  Example: To read the value in the `PARTNUM` register, we would send `1` (read) `1` (burst bit for overloaded register) `110000` (the address where this register is located). `1111 0000` = `0xF0`. Since data can only be received while the master is transmitting, we must send two bytes: `0xF0` `0x00`. In return, we receive two bytes corresponding to the Chip Status Byte and the actual register value.
+>  Example: To read the value in the `PARTNUM` register, we would send the value `1111 0000` (`0xF0`). The first two bits are the R/W and burst bits set to `1`, while the last 6 are the address where `PARTNUM` lives at (`11 0000`).
+> 
+>  Since data can only be received while the master is transmitting, we must send two bytes: `0xF0` `0x00`. In return, we receive two bytes corresponding to the Chip Status Byte and the actual register value.
 >
 > Sending only the byte `0xF0` would give us the chip status byte, but not the actual register value. `0x00` functions as a dummy byte meant to give time (clock cycles) for the slave to send back the requested data.
 # 6. Interact with the Device
