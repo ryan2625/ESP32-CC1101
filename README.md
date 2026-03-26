@@ -294,7 +294,7 @@ The government-approved method of accomplishing this is as follows:
 - Wait for `MISO` to go LOW
 - Send `SRES`
 
-This would require you to set spics_io_num to -1 when adding a device to the bus. Then, you would have to control the `CSn` manually. As specified by the data sheet in section 10.1, `CSn` will have to stay pulled low (set to `0` instead of `1`) during any SPI transaction. The `CSn` going low tells the ESP32 to open up communication with that device. Since multiple devices can share the same SPI bus, the ESP32 will only listen to the one that has `CSn` low. `CSn` going low is visualized in figure 15 of the datasheet [and displayed above](https://github.com/ryan2625/ESP32-CC1101/blob/main/assets/timing_transfer.png). 
+This would require you to set spics_io_num to -1 when adding a device to the bus. Then, you would have to control the `CSn` manually. As specified by the data sheet in section 10.1, `CSn` will have to stay pulled low (set to `0` instead of `1`) during any SPI transaction. The `CSn` going low tells the ESP32 to open up communication with that device. Since multiple devices can share the same SPI bus, the ESP32 will only listen to the one that has `CSn` low.
 
 Alternatively, you can send the command strobes `SRES`, `SIDLE`, and `SFTX` in that order. After this sequence, your device should be ready to use. See `strobe_reset` in `main.cpp`.
 
