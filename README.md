@@ -133,7 +133,7 @@ extern "C" void app_main(void) {
     - MOSI_io_num: The GPIO pin that connects the `MOSI` pin.
     - MISO_io_num: The GPIO pin that connects the `MISO` pin.
     - sclk_io_num: The GPIO pin that connects the SCLK pin.
-    - quadwp & quadhd: Set to -1 indicating we are not using these.
+    - quadwp & quadhd: These pins don't exist on the CC1101, so they are set to -1 indicating the bus doesn't need to consider them.
 - SPI_DMA_DISABLED
     - Controls whether the SPI driver uses Direct Memory Access for transfers. DMA can be disabled for small and simple transfers. 
 
