@@ -198,7 +198,7 @@ The CC1101 has three main types of addresses: configuration [registers](https://
 - Command strobes are single byte instructions that immediately trigger actions inside the radio such as system reset (`SRES`), enter receiver mode (`SRX`), or enter transmit mode (`STX`).
 
 ### Expected Transaction Format
-The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). The important takeaway is that every SPI transaction starts with a header byte that follows this format:
+The CC1101 does not have separate phases for sending bytes (no separate command phase, address phase, etc). It starts every SPI transaction with a single header byte that follows this format:
 
 <div align='center'>
    
