@@ -5,9 +5,10 @@
 </div>
 
 ## Introduction
-
+<a id="steps"></a>
 This project demonstrates how to write basic firmware for the CC1101 RF transceiver with the ESP32 using the ESP-IDF framework. In this demo, we will be accessing a [register](https://en.wikipedia.org/wiki/Hardware_register#:~:text=In%20digital%20electronics%2C%20a%20register,upon%20loss%20of%20operating%20power.) inside the CC1101 (and performing a few other operations). A successful read of this register will confirm we have set up our devices to communicate properly. The relevant code can be found in `main/main.cpp`. 
 > Note: We use ESP-IDF here for full control and learning purposes, but Arduino can be a simpler option for long-term development.
+<a id="steps"></a>
 
 Writing this firmware can be accomplished in five steps:
 - Acquiring prerequisites (hardware, software)
